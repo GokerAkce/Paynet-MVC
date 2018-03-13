@@ -1,0 +1,215 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>CustomForm</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+	<script src="https://pts-pj.paynet.com.tr/public/js/jquery.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript"
+			class="paynet-button"
+			src="~/Content/paynet-custom.js"
+			data-form="#checkout-form"
+			data-key="pbk_pcs_X20qg3N01UiFl1*G1H3sSZkRWztywrjn"
+			data-amount="1"
+			data-tds_required=false
+			data-description="Ödeme açıklaması">
+	</script>
+
+	<script type="text/javascript">
+        $(function () {
+            $("#amount").change(function () {
+                Paynet.services.updateAmount($("#amount").val(), function (d) { if (d && d.ok) { alert("Tutar Güncellendi.") } })
+
+            });
+            Paynet.events.onCheckBin(function (d) {
+                if (d && d.ok) {
+                    $('.installment-table').html('');
+
+                    d.bank.installments.sort(function (current, next) {
+                        if (current.instalment > next.instalment) return 1;
+                        if (current.instalment < next.instalment) return -1;
+
+                        return 0;
+                    });
+
+                    $('#data-tds').attr('data-tds', d.bank.tdsEnable);
+                    $('#bankLogo').attr('src', d.bank.logoUrl);
+                    $('#bankLogo').attr('alt', "");
+
+                    $('.bank_logo').show();
+
+                    for (var i = 0; i < d.bank.installments.length; i++) {
+                        $(".installment-table").append("<li> <div class=installment-item data-key=" + d.bank.installments[i].instalment_key + "><input type=radio name=installment /> " + d.bank.installments[i].desc + "-&nbsp;&nbsp;" + d.bank.installments[i].instalment_amount + "&nbsp;TL" + "</div></li>");
+                    }
+
+                    $('.installment-table').show();
+
+                    if (d.tdsState == 'required') {
+                        $('#tds').attr('checked', 'checked');
+                        $('#tds').attr('disabled', 'disabled');
+
+                        $('#isTds').hide();
+                    } else if (d.tdsState == 'optional') {
+                        $('#tds').attr('checked', 'checked');
+                        $('#tds').removeAttr('disabled', 'disabled');
+                        $('#isTds').show();
+                    }
+
+                } else {
+                    $('.installment-table').hide();
+                    $('.bank_logo').hide();
+                    $('#isTds').hide();
+                }
+            });
+            Paynet.events.validationError(function (e) {
+                alert(e.message);
+            });
+            Paynet.events.onAuthentication(function (c) {
+                if (!c.ok) {
+                    alert(c.message);
+                }
+            });
+            Paynet.events.onCreateToken(function (c) {
+                if (!c.ok) {
+                    alert(c.message);
+                }
+            });
+            $('.installment-table').delegate('.installment-item', 'click', function () {
+                var $that = $(this);
+
+                $('.installment-item').removeClass('active');
+
+                $that.addClass('active');
+
+                $('#installmentKey').val($that.attr('data-key'));
+
+                $('[name="installment"]').prop('checked', false);
+                $that.find('[name="installment"]').prop('checked', true);
+            });
+        });
+	</script>
+	<div>
+		<h2 style="text-align:center; margin-bottom:20px; margin-top: 0px; background-color:rgb(93, 147, 204); color:white;">Paynet Ödeme Ekranı</h2>
+		<div class="row">
+			<div class="col-lg-12">
+				<div style="width:280px; margin: auto;">
+					<form action="http://localhost:64640/Paynet/ChargeTransaction" method="post" name="checkout-form" id="checkout-form">
+						<span style="font-weight:bold;">Kart Üzerindeki İsim</span>
+						<input type="text" name="cardHolderName" id="cardHolderName" data-paynet="holderName" class="form-control" placeholder="Kart Üzerindeki İsim" value="">
+						<span style="font-weight:bold;">Tutar</span>
+						<input type="text" name="amount" maxlength="16" id="amount" data-paynet="amount" class="form-control" placeholder="Tutar">
+						<span style="font-weight:bold;">Kart Numarası</span>
+						<input type="text" name="cardNumber" maxlength="16" id="cardNumber" data-paynet="number" class="form-control" placeholder="Cart No" value="" readonly>
+						<span style="font-weight:bold;">Ay</span>
+						<select name="expMonth" id="expMonth" data-paynet="exp-month" class="form-control">
+							<option value="">...</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+						</select>
+						<span style="font-weight:bold;">Yıl</span>
+						<select name="expYear" id="expYear" data-paynet="exp-year" class="form-control">
+							<option value="">...</option>
+							<option value="2015">2015</option>
+							<option value="2016">2016</option>
+							<option value="2017">2017</option>
+							<option value="2018">2018</option>
+							<option value="2019">2019</option>
+							<option value="2019">2020</option>
+							<option value="2019">2021</option>
+							<option value="2020">2022</option>
+						</select>
+						<span style="font-weight:bold;">CVV</span>
+						<input type="password" maxlength="4" name="cvv" id="cvv" data-paynet="cvv" placeholder="CVV" class="form-control" value="">
+						<br>
+
+						<div class="checkbox col-xs-12 no-padding-left" id="isTds" style="display: none;">
+							<label>
+								<input type="checkbox" name="tds" id="tds" data-paynet="do3D" checked="checked">3D Ödeme
+							</label>
+						</div>
+						<div class="panel panel-default" id="data-tds" data-tds="">
+							<div class="bank_logo col-xs-12 panel-heading no-padding-left" id="logo" style="display: none;">
+								<label>
+									<img id="bankLogo" src="">
+								</label>
+							</div>
+							<div id="taksit" class="installment-table col-xs-12 no-padding-left no-padding-right panel-body" style="display: none;">
+								<ol></ol>
+							</div>
+						</div>
+						<input type="hidden" name="installmentKey" id="installmentKey" data-paynet="installmentKey" value="">
+
+						<button type="submit" id="submitButton" class="btn btn-primary col-xs-12" data-paynet="submit">Öde</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+		.installment-table {
+			display:none !important; 
+		}
+
+			.installment-table > li:nth-child(odd) {
+				    background-color: rgb(243, 243, 243) !important;
+			}
+	</style>
+	<script>
+		function getData() {
+			$('#cardHolderName').val('goker');
+			$("#amount").val("2");
+			$("#cardNumber").val("4355084355084358");
+			$("#cvv").val("000");
+			$("#expMonth").val("12");
+			$("#expYear").val("2018");
+			
+			Paynet.services.updateAmount($("#amount").val())
+
+			setTimeout(function () {
+				Paynet.services.checkBin('4355084355084358');
+			}, 1500);
+
+			
+			setTimeout(function () {
+				// Taksit set etmek için girilebilecek değerler -> [Tek, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+				chooseInstalment("2");
+			}, 2500);
+		}
+
+		function chooseInstalment(val) {
+
+			$('.installment-item').each(function (x) {
+				var taxVal = $('.installment-item')[x].innerText.split(' ')[1]
+				if (taxVal == val) {
+					var dataKey = $('.installment-item')[x]['attributes']['data-key'].value
+					$('#installmentKey').val(dataKey);
+					console.log('Taksit bilgisi girildi, submit ediliyor...');
+					$('#submitButton').click();
+				}
+			});
+			
+		}
+
+		getData();
+
+	</script>
+</body>
+</html>
