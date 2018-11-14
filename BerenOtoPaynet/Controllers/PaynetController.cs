@@ -21,13 +21,14 @@ namespace BerenOtoPaynet.Controllers
             ViewBag.Phone = cmp.Phone;
             ViewBag.Address = cmp.Address;
             ViewBag.LogoUrl = pc.LogoUrl;
+            ViewBag.CustomerCode = carikodu;
 
             ViewBag.Desc = carikodu + " / " + cariadi;
-            return View("BerenOto");
+            return View("HomePage");
         }
 
         [HttpPost]
-        public ActionResult Odeme(string amount, string desc)
+        public ActionResult Odeme(string amount, string desc, string customerCode)
         {
             Company cmp = new Company();
 
@@ -50,6 +51,7 @@ namespace BerenOtoPaynet.Controllers
 
             ViewBag.Desc = desc;
             ViewBag.Amount = amount;
+            ViewBag.CustomerCode = customerCode;
 
             if (amount.Contains(","))
             {
@@ -65,16 +67,20 @@ namespace BerenOtoPaynet.Controllers
             else
             {
                 ViewBag.ErrorMessage = "Tutar hatalı girildi.";
-                return View("BerenOto");
+                return View("HomePage");
             }
-           
-           
+
+            if(desc.Length == 3 && desc == " / ")
+            {
+                ViewBag.ErrorMessage = "Açıklama hatası meydana geldi, B2B üzerinden ödeme sayfasına tekrardan giriş yapınız.";
+                return View("HomePage");
+            }
                         
             return View();
         }
 
         [HttpPost]
-        public ActionResult ChargeTransaction(string session_id, string token_id)
+        public ActionResult ChargeTransaction(string session_id, string token_id, string customerCode)
         {
             PaynetConfig pc = new PaynetConfig();
             ChargeParameters param = new ChargeParameters();
@@ -82,7 +88,7 @@ namespace BerenOtoPaynet.Controllers
             param.session_id = session_id;
             param.token_id = token_id;
             param.transaction_type = TransactionType.Sales;
-            //param.reference_no = "1234";
+            param.reference_no = customerCode;
 
             PaynetClient.PaynetClient client = new PaynetClient.PaynetClient(pc.SecretKey, true);
 

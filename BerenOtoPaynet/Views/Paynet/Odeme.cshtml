@@ -42,6 +42,7 @@
 								<form action="@Url.Action("chargetransaction","paynet")" method="post">
 									<script class="paynet-button" type="text/javascript" src="https://pj.paynet.com.tr/public/js/paynet.min.js" data-key="@ViewBag.PublicKey" data-amount="@(ViewBag.DataAmount)" data-ratio_code="" data-no_instalment="@ViewBag.Instalment" data-agent="@ViewBag.AgentCode" data-add_commission_amount="@ViewBag.Commission" data-tds_required="@ViewBag.TDS" data-description="@ViewBag.Desc"  data-button_label="Ödeme Yap" data-image="@ViewBag.LogoUrl">
 									</script>
+									<input type="hidden" name="customerCode" value="@ViewBag.CustomerCode" />
 								</form>
 							</div>
 						</div>
