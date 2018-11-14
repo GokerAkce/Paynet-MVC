@@ -4,3 +4,6 @@
 
 /.vs
 /BerenOtoPaynet/obj
+/BerenOtoPaynet/bin/BerenOtoPaynet.pdb
+/BerenOtoPaynet/bin/BerenOtoPaynet.dll.config
+/BerenOtoPaynet/bin/BerenOtoPaynet.dll
