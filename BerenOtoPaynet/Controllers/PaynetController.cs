@@ -92,7 +92,7 @@ namespace BerenOtoPaynet.Controllers
 
             PaynetClient.PaynetClient client = new PaynetClient.PaynetClient(pc.SecretKey, true);
 
-           ChargeResponse response = client.ChargeTransaction(param);
+            ChargeResponse response = client.ChargeTransaction(param);
             
             IDictionary requestForm = new Dictionary<string, object>();
             foreach (string key in Request.Form.AllKeys)
@@ -100,6 +100,13 @@ namespace BerenOtoPaynet.Controllers
                 string value = Request.Form[key];
                 requestForm.Add(key, value);
             }
+
+            if(response.xact_id != null)
+            {
+                SlipResponse sr = client.Slip(new SlipParameters(){xact_id = response.xact_id});
+                ViewBag.SlipURL = sr.url;
+            }
+
             ViewBag.Response = response;
             ViewBag.RequestForm = requestForm;
             ViewBag.LogoUrl = pc.LogoUrl;
