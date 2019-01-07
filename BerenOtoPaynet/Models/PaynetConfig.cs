@@ -15,6 +15,7 @@ namespace BerenOtoPaynet.Models
         public string AgentCode { get { return System.Configuration.ConfigurationManager.AppSettings["PaynetIV.Client.AgentCode"]; } }
         public string Instalment { get { return System.Configuration.ConfigurationManager.AppSettings["PaynetIV.Client.Instalment"]; } }
         public string Commission { get { return System.Configuration.ConfigurationManager.AppSettings["PaynetIV.Client.Commission"]; } }
+        public string RatioCode { get { return System.Configuration.ConfigurationManager.AppSettings["PaynetIV.Client.RatioCode"]; } }
         public string TDS { get { return System.Configuration.ConfigurationManager.AppSettings["PaynetIV.Client.TDS"]; } }
     }
 }

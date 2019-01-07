@@ -45,7 +45,10 @@
 								<div class="col-md-12">
 									<div class="well well-sm" style="background-color:rgb(88, 193, 54); color:white;">Ödeme işleminiz gerçekleştirilmiştir.</div>
 									<div class="well well-sm">Ödenen Tutar: <b>@ViewBag.Response.amount TL.</b></div>
-									<div class="well well-sm"><a href="@ViewBag.SlipURL" target="_blank">Ödemeniz ile alakalı slip bilgisine ulaşmak için tıklayınız.</a></div>
+									@if (@ViewBag.SlipURL != null)
+									{ 
+										<div class="well well-sm"><a href="@ViewBag.SlipURL" target="_blank">Ödemeniz ile alakalı slip bilgisine ulaşmak için tıklayınız.</a></div> 
+									}
 								</div>
 							}
 							else
@@ -54,7 +57,7 @@
 									<div class="well well-sm" style="background-color: rgb(193, 54, 54); color: black;"><b>HATA! Ödeme işleminiz iptal edildi.</b></div>
 									<div class="well well-sm">Paynet: <b>@ViewBag.Response.bank_error_message</b></div>
 									<div class="well well-sm">Banka: <b>@ViewBag.Response.paynet_error_message</b></div>
-									
+
 								</div>
 							}
 						</div>
@@ -71,105 +74,105 @@
 
 
 	@*<div>
-		<table id="result" class=" display tbResult">
-			<thead>
+			<table id="result" class=" display tbResult">
+				<thead>
+					<tr>
+						<th>Kolon Adı</th>
+						<th>Değeri</th>
+					</tr>
+				</thead>
+				<tr><td>Sonuç</td><td>@ViewBag.Response.message</td></tr>
+				<tr><td>xact_id</td><td>@ViewBag.Response.xact_id</td></tr>
+				<tr><td>xact_date</td><td>@ViewBag.Response.xact_date</td></tr>
 				<tr>
-					<th>Kolon Adı</th>
-					<th>Değeri</th>
+					<td>transaction_type</td>
+					<td>@ViewBag.Response.transaction_type</td>
 				</tr>
-			</thead>
-			<tr><td>Sonuç</td><td>@ViewBag.Response.message</td></tr>
-			<tr><td>xact_id</td><td>@ViewBag.Response.xact_id</td></tr>
-			<tr><td>xact_date</td><td>@ViewBag.Response.xact_date</td></tr>
-			<tr>
-				<td>transaction_type</td>
-				<td>@ViewBag.Response.transaction_type</td>
-			</tr>
-			<tr>
-				<td>pos_type</td>
+				<tr>
+					<td>pos_type</td>
 
-				<td>@ViewBag.Response.pos_type</td>
-			</tr>
-			<tr>
-				<td>is_tds</td>
+					<td>@ViewBag.Response.pos_type</td>
+				</tr>
+				<tr>
+					<td>is_tds</td>
 
-				<td>@ViewBag.Response.is_tds</td>
-			</tr>
-			<tr>
-				<td>agent_id</td>
+					<td>@ViewBag.Response.is_tds</td>
+				</tr>
+				<tr>
+					<td>agent_id</td>
 
-				<td>@ViewBag.Response.agent_id</td>
-			</tr>
-			<tr>
-				<td>user_id</td>
-				<td>@ViewBag.Response.user_id</td>
-			</tr>
-			<tr>
-				<td>email</td>
-				<td>@ViewBag.Response.email</td>
-			</tr>
-			<tr>
-				<td>phone</td>
-				<td>@ViewBag.Response.phone</td>
-			</tr>
-			<tr>
-				<td>bank_id</td>
-				<td>@ViewBag.Response.bank_id</td>
-			</tr>
-			<tr>
-				<td>instalment</td>
-				<td>@ViewBag.Response.instalment</td>
-			</tr>
-			<tr>
-				<td>card_no_masked</td>
-				<td>@ViewBag.Response.card_no_masked</td>
-			</tr>
-			<tr>
-				<td>card_holder</td>
-				<td>@ViewBag.Response.card_holder</td>
-			</tr>
-			<tr>
-				<td>amount</td>
-				<td>@ViewBag.Response.amount</td>
-			</tr>
-			<tr>
-				<td>comission</td>
-				<td>@ViewBag.Response.comission</td>
-			</tr>
-			<tr>
-				<td>comission_tax</td>
-				<td>@ViewBag.Response.comission_tax</td>
-			</tr>
-			<tr>
-				<td>currency</td>
-				<td>@ViewBag.Response.currency</td>
-			</tr>
-			<tr>
-				<td>authorization_code</td>
-				<td>@ViewBag.Response.authorization_code</td>
-			</tr>
-			<tr>
-				<td>reference_code</td>
-				<td>@ViewBag.Response.reference_code</td>
-			</tr>
-			<tr>
-				<td>order_id</td>
-				<td>@ViewBag.Response.order_id</td>
-			</tr>
-			<tr>
-				<td>paynet_error_message</td>
-				<td>@ViewBag.Response.paynet_error_message</td>
-			</tr>
-			<tr>
-				<td>bank_error_short_desc</td>
-				<td>@ViewBag.Response.bank_error_short_desc</td>
-			</tr>
-			<tr>
-				<td>bank_error_message</td>
-				<td>@ViewBag.Response.bank_error_message</td>
-			</tr>
-		</table>
-	</div>
+					<td>@ViewBag.Response.agent_id</td>
+				</tr>
+				<tr>
+					<td>user_id</td>
+					<td>@ViewBag.Response.user_id</td>
+				</tr>
+				<tr>
+					<td>email</td>
+					<td>@ViewBag.Response.email</td>
+				</tr>
+				<tr>
+					<td>phone</td>
+					<td>@ViewBag.Response.phone</td>
+				</tr>
+				<tr>
+					<td>bank_id</td>
+					<td>@ViewBag.Response.bank_id</td>
+				</tr>
+				<tr>
+					<td>instalment</td>
+					<td>@ViewBag.Response.instalment</td>
+				</tr>
+				<tr>
+					<td>card_no_masked</td>
+					<td>@ViewBag.Response.card_no_masked</td>
+				</tr>
+				<tr>
+					<td>card_holder</td>
+					<td>@ViewBag.Response.card_holder</td>
+				</tr>
+				<tr>
+					<td>amount</td>
+					<td>@ViewBag.Response.amount</td>
+				</tr>
+				<tr>
+					<td>comission</td>
+					<td>@ViewBag.Response.comission</td>
+				</tr>
+				<tr>
+					<td>comission_tax</td>
+					<td>@ViewBag.Response.comission_tax</td>
+				</tr>
+				<tr>
+					<td>currency</td>
+					<td>@ViewBag.Response.currency</td>
+				</tr>
+				<tr>
+					<td>authorization_code</td>
+					<td>@ViewBag.Response.authorization_code</td>
+				</tr>
+				<tr>
+					<td>reference_code</td>
+					<td>@ViewBag.Response.reference_code</td>
+				</tr>
+				<tr>
+					<td>order_id</td>
+					<td>@ViewBag.Response.order_id</td>
+				</tr>
+				<tr>
+					<td>paynet_error_message</td>
+					<td>@ViewBag.Response.paynet_error_message</td>
+				</tr>
+				<tr>
+					<td>bank_error_short_desc</td>
+					<td>@ViewBag.Response.bank_error_short_desc</td>
+				</tr>
+				<tr>
+					<td>bank_error_message</td>
+					<td>@ViewBag.Response.bank_error_message</td>
+				</tr>
+			</table>
+		</div>
 	*@
 
 </body>

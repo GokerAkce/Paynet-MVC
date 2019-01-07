@@ -48,6 +48,7 @@ namespace BerenOtoPaynet.Controllers
             ViewBag.Instalment = pc.Instalment;
             ViewBag.Commission = pc.Commission;
             ViewBag.TDS = pc.TDS;
+            ViewBag.RatioCode = pc.RatioCode;
 
             ViewBag.Desc = desc;
             ViewBag.Amount = amount;
@@ -70,12 +71,12 @@ namespace BerenOtoPaynet.Controllers
                 return View("HomePage");
             }
 
-            if(desc.Length == 3 && desc == " / ")
+            if (desc.Length == 3 && desc == " / ")
             {
                 ViewBag.ErrorMessage = "Açıklama hatası meydana geldi, B2B üzerinden ödeme sayfasına tekrardan giriş yapınız.";
                 return View("HomePage");
             }
-                        
+
             return View();
         }
 
@@ -84,7 +85,7 @@ namespace BerenOtoPaynet.Controllers
         {
             PaynetConfig pc = new PaynetConfig();
             ChargeParameters param = new ChargeParameters();
-            
+
             param.session_id = session_id;
             param.token_id = token_id;
             param.transaction_type = TransactionType.Sales;
@@ -92,24 +93,39 @@ namespace BerenOtoPaynet.Controllers
 
             PaynetClient.PaynetClient client = new PaynetClient.PaynetClient(pc.SecretKey, true);
 
-            ChargeResponse response = client.ChargeTransaction(param);
-            
-            IDictionary requestForm = new Dictionary<string, object>();
-            foreach (string key in Request.Form.AllKeys)
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
+            try
             {
-                string value = Request.Form[key];
-                requestForm.Add(key, value);
+                ChargeResponse response = client.ChargeTransaction(param);
+                IDictionary requestForm = new Dictionary<string, object>();
+                foreach (string key in Request.Form.AllKeys)
+                {
+                    string value = Request.Form[key];
+                    requestForm.Add(key, value);
+                }
+
+                ViewBag.SlipURL = null;
+                if (response.xact_id != null && response.is_succeed)
+                {
+                    SlipResponse sr = client.Slip(new SlipParameters() { xact_id = response.xact_id });
+                    ViewBag.SlipURL = sr.url;
+
+                }
+
+                Company cmp = new Company();
+                ViewBag.Company = cmp.Name;
+
+                ViewBag.Response = response;
+                ViewBag.RequestForm = requestForm;
+                ViewBag.LogoUrl = pc.LogoUrl;
+
             }
 
-            if(response.xact_id != null)
+            catch (Exception ex)
             {
-                SlipResponse sr = client.Slip(new SlipParameters(){xact_id = response.xact_id});
-                ViewBag.SlipURL = sr.url;
+                Console.WriteLine(ex.Message);
             }
-
-            ViewBag.Response = response;
-            ViewBag.RequestForm = requestForm;
-            ViewBag.LogoUrl = pc.LogoUrl;
 
             return View("Result");
         }
